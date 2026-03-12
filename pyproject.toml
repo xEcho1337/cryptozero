@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cryptozero"
+version = "0.1.0"
+authors = [ { name = "Ferris" }, { name = "xEcho1337" } ]
+description = "Helper library for Crypto CTFs"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+
+dependencies = [
+  "click>=8.0",
+  "cryptography",
+  "pycryptodome",
+  "tqdm",
+  "gmpy2",
+  "sympy"
+]
+[tool.setuptools]
+package-dir = {"" = "cryptozero"}
+
+[project.optional-dependencies]
+test = [
+  "pytest"
+]
