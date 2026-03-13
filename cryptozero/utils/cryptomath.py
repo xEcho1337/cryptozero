@@ -29,7 +29,7 @@ def compute_phi(factors: list[int]):
         x *= factor - 1
     return x
 
-def smooth_prime(starting: int, bits: int) -> int:
+def smooth_prime(starting: int, bits: int, unique=False) -> int:
     if not is_prime(starting):
         raise ValueError("Starting value is not prime")
 
@@ -41,9 +41,13 @@ def smooth_prime(starting: int, bits: int) -> int:
         last = next_prime(last)
         pm1 *= last
 
-    k = 0
+    k = last if unique else 0
     while True:
         k += 1
+
+        if unique and not is_prime(k):
+            continue
+
         test = k * pm1 + 1
         if is_prime(test):
             return test
