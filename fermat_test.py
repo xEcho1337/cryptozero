@@ -1,9 +1,10 @@
 import random
 from Crypto.Util import number
+from sympy import factorint
 
-from cryptozero.attacks.scanner import scan_vulnerabilities
-from cryptozero.attacks.rsa.fermat_attack import FermatAttack
-from cryptozero.ciphers.rsa import RSA
+from rsa.attacks.fermat import fermat_attack
+from rsa.core import RSA
+from utils.cryptomath import bsmooth, compute_phi
 
 
 def generate_weak_rsa(bit_length=1024, delta_bits=16, e=65537):
@@ -61,18 +62,14 @@ if __name__ == '__main__':
     print(f"d = {params['d']}")
     print("\n\n")
 
-    print("Vulnerabilities found by scan:")
-    print(scan_vulnerabilities("rsa", params))
-    print("\n\n")
-
     print("Performing Fermat Attack")
     plaintext = "Very super omega secret unfindable message!!"
 
     rsa = RSA(params["n"], params["e"])
     ciphertext = rsa.encrypt(plaintext.encode("utf-8"))
 
-    attack = FermatAttack(**params)
-    print(attack.is_vulnerable())
-
-    decrypted_message = attack.run(ciphertext)
+    p, q = fermat_attack(params['n'])
+    phi = compute_phi([p, q])
+    d = rsa.compute_d(phi)
+    decrypted_message = rsa.decrypt(ciphertext, d)
     print(decrypted_message.decode("utf-8"))

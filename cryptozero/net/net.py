@@ -26,10 +26,16 @@ class Netcat:
         assert self.sock is not None
         self.sock.sendall(data)
 
+    def send_after(self, delimiter: bytes, data: bytes) -> None:
+        self.receive_until(delimiter)
+        self.send(data)
+
+    def recv_line(self):
+        self._connect()
+
     def receive_until(self, delimiter: bytes) -> bytes:
         """Receive from the service until the buffer ends with `delimiter`."""
         self._connect()
-        assert self.sock is not None
         buffer = b""
         while not buffer.endswith(delimiter):
             chunk = self.sock.recv(4096)

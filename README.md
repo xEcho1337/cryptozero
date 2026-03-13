@@ -17,8 +17,16 @@ pip install . -e
 
 ## Roadmap
 
-- [ ] Diffie-Hellman Cipher Implementation
+- [X] Fermat attack
+- [X] Wiener attack
+- [X] Small e attack
+- [X] Pohlig-Hellman
+- [X] Various Encodings
+- [X] Shortcut for calculating phi
+- [X] Diffie-Hellman Cipher Implementation
 - [ ] More RSA attacks
 - [ ] More Diffie-Hellman attacks
-- [ ] ECC
+- [ ] Hastad attack
+- [ ] Tonelli Shanks
 - [ ] Proper documentation
+- [ ] ECC
