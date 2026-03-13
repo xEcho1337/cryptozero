@@ -1,4 +1,4 @@
-from utils.cryptomath import ithroot, crt
+from cryptozero.utils.cryptomath import ithroot, crt
 
 def hastad(e: int, ciphertexts: list[int], moduli: list[int]) -> int:
     if len(ciphertexts) != len(moduli):

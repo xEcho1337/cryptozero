@@ -19,8 +19,9 @@ dependencies = [
   "gmpy2",
   "sympy"
 ]
-[tool.setuptools]
-package-dir = {"" = "cryptozero"}
+
+[tool.setuptools.packages.find]
+where = ["."]
 
 [project.optional-dependencies]
 test = [

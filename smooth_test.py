@@ -1,5 +1,5 @@
 from sympy import factorint
-from utils.cryptomath import smooth_prime
+from cryptozero.utils.cryptomath import smooth_prime
 
 if __name__ == '__main__':
     p = 7 # a small starting prime

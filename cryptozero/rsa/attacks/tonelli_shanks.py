@@ -1,7 +1,7 @@
 from itertools import product
 from math import prod
 from sympy import sqrt_mod
-from utils.cryptomath import crt
+from cryptozero.utils.cryptomath import crt
 
 def roots_2k_mod(c: int, p: int, e: int) -> set[int]:
     if e <= 0 or (e & (e - 1)) != 0:
