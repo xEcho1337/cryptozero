@@ -86,7 +86,7 @@ def find_repeating_length(stream, min_size=2, max_size=5):
         most_common = counter.most_common(1)
 
         if most_common and most_common[0][1] > 1:
-            return size
+            return most_common[0][1]
 
     return None
 
