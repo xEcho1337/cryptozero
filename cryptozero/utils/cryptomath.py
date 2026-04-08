@@ -1,10 +1,9 @@
 import math
-from typing import Any
-
 import sympy.ntheory.modular
-from gmpy2 import is_prime, next_prime, isqrt, gmpy2
-from sympy import factorint, integer_nthroot, n_order
 
+from collections import Counter
+from gmpy2 import is_prime, next_prime
+from sympy import factorint, integer_nthroot
 
 def egcd(a: int, b: int) -> tuple[int,int,int]:
     if b == 0:
@@ -12,19 +11,24 @@ def egcd(a: int, b: int) -> tuple[int,int,int]:
     g, x1, y1 = egcd(b, a % b)
     return g, y1, x1 - (a // b) * y1
 
+
 def inverse(a: int, m: int) -> int:
     return pow(a, -1, m)
+
 
 def gcd(a: int, b: int) -> int:
     while b:
         a, b = b, a % b
     return a
 
+
 def ithroot(a: int, b: int) -> int:
     return integer_nthroot(a, b)
 
+
 def crt(moduli: list[int], residues: list[int]) -> tuple[int, int] | None:
     return sympy.ntheory.modular.crt(moduli, residues)
+
 
 def compute_phi(factors: list[int]):
     # TODO: add support for repeated factors
@@ -32,6 +36,39 @@ def compute_phi(factors: list[int]):
     for factor in factors:
         x *= factor - 1
     return x
+
+
+def find_repeating_subsequences(stream):
+    """
+    Find the most common repeating subsequences (ngrams) in a stream.
+
+    Credits: https://stackoverflow.com/questions/69170602/how-do-i-find-repeating-sequences-in-a-list
+
+    :param stream: iterable of values
+    :return: list of (subsequence, count) or None if no repetition
+    """
+    results = []
+
+    for size in range(5, 1, -1):
+        if len(stream) < size:
+            results.append(None)
+            continue
+
+        subsequences = (
+            tuple(stream[i:i + size])
+            for i in range(len(stream) - size + 1)
+        )
+
+        counter = Counter(subsequences)
+        most_common = counter.most_common(1)
+
+        if most_common and most_common[0][1] > 1:
+            results.append(most_common[0])
+        else:
+            results.append(None)
+
+    return results
+
 
 def smooth_prime(starting: int, bits: int, unique=False) -> int:
     if not is_prime(starting):
@@ -55,6 +92,7 @@ def smooth_prime(starting: int, bits: int, unique=False) -> int:
         test = k * pm1 + 1
         if is_prime(test):
             return test
+
 
 def baby_step_giant_step(g: int, b: int, p: int, order: int) -> int | None:
     m = math.isqrt(order)
