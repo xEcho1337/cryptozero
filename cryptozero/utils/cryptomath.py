@@ -1,7 +1,7 @@
 import math
 import sympy.ntheory.modular
 
-from collections import Counter
+from collections import Counter, defaultdict
 from gmpy2 import is_prime, next_prime
 from sympy import factorint, integer_nthroot
 
@@ -68,6 +68,27 @@ def find_repeating_subsequences(stream):
             results.append(None)
 
     return results
+
+
+def find_repeating_length(stream, min_size=2, max_size=5):
+    n = len(stream)
+
+    for size in range(max_size, min_size - 1, -1):
+        if n < size:
+            continue
+
+        subsequences = (
+            tuple(stream[i:i + size])
+            for i in range(n - size + 1)
+        )
+
+        counter = Counter(subsequences)
+        most_common = counter.most_common(1)
+
+        if most_common and most_common[0][1] > 1:
+            return size
+
+    return None
 
 
 def smooth_prime(starting: int, bits: int, unique=False) -> int:
