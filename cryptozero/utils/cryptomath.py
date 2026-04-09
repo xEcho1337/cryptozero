@@ -1,9 +1,10 @@
 import math
 import sympy.ntheory.modular
 
-from collections import Counter, defaultdict
+from collections import Counter
 from gmpy2 import is_prime, next_prime
-from sympy import factorint, integer_nthroot
+from sympy import factorint, integer_nthroot, Matrix
+
 
 def egcd(a: int, b: int) -> tuple[int,int,int]:
     if b == 0:
@@ -30,65 +31,35 @@ def crt(moduli: list[int], residues: list[int]) -> tuple[int, int] | None:
     return sympy.ntheory.modular.crt(moduli, residues)
 
 
-def compute_phi(factors: list[int]):
-    # TODO: add support for repeated factors
-    x = 1
-    for factor in factors:
-        x *= factor - 1
-    return x
+def compute_phi(factors: list[int]) -> int:
+    counts = Counter(factors)
+    phi = 1
+
+    for p, e in counts.items():
+        phi *= (p ** e - p ** (e - 1))  # oppure p**(e-1) * (p - 1)
+
+    return phi
 
 
-def find_repeating_subsequences(stream):
-    """
-    Find the most common repeating subsequences (ngrams) in a stream.
-
-    Credits: https://stackoverflow.com/questions/69170602/how-do-i-find-repeating-sequences-in-a-list
-
-    :param stream: iterable of values
-    :return: list of (subsequence, count) or None if no repetition
-    """
-    results = []
-
-    for size in range(5, 1, -1):
-        if len(stream) < size:
-            results.append(None)
-            continue
-
-        subsequences = (
-            tuple(stream[i:i + size])
-            for i in range(len(stream) - size + 1)
-        )
-
-        counter = Counter(subsequences)
-        most_common = counter.most_common(1)
-
-        if most_common and most_common[0][1] > 1:
-            results.append(most_common[0])
-        else:
-            results.append(None)
-
-    return results
+def vandermonde(xs: list[int], degree: int, mod: int):
+    return Matrix([
+        [pow(x, j, mod) for j in range(degree + 1)]
+        for x in xs
+    ])
 
 
-def find_repeating_length(stream, min_size=2, max_size=5):
-    n = len(stream)
+def interpolate_mod(xs: list[int], ys: list[int], mod: int):
+    assert len(xs) == len(ys), "xs e ys must have the same length"
 
-    for size in range(max_size, min_size - 1, -1):
-        if n < size:
-            continue
+    n = len(xs)
 
-        subsequences = (
-            tuple(stream[i:i + size])
-            for i in range(n - size + 1)
-        )
+    A = vandermonde(xs, n - 1, mod)
+    b = Matrix(ys)
 
-        counter = Counter(subsequences)
-        most_common = counter.most_common(1)
+    # A * coeffs = b mod p
+    coeffs = A.inv_mod(mod) * b
 
-        if most_common and most_common[0][1] > 1:
-            return most_common[0][1]
-
-    return None
+    return [int(c % mod) for c in coeffs]
 
 
 def smooth_prime(starting: int, bits: int, unique=False) -> int:
